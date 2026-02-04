@@ -14,16 +14,16 @@ import os
 from pathlib import Path
 
 class BotAluguelMotos:
-    
+    """Bot para gestão de cobranças e recebimento de comprovantes"""
     
     def __init__(self, config_file='config.json'):
-       
+        """Inicializa o bot com as configurações"""
         self.carregar_config(config_file)
         self.conectar_sheets()
         print("✅ Bot inicializado com sucesso!")
     
     def carregar_config(self, config_file):
-       
+        """Carrega configurações do arquivo JSON"""
         try:
             with open(config_file, 'r', encoding='utf-8') as f:
                 config = json.load(f)
@@ -55,7 +55,7 @@ class BotAluguelMotos:
             raise
     
     def criar_config_exemplo(self):
-       
+        """Cria um arquivo de configuração exemplo"""
         config_exemplo = {
             "evolution_api": {
                 "url": "https://sua-evolution-api.com",
@@ -110,7 +110,7 @@ class BotAluguelMotos:
             raise
     
     def obter_clientes(self):
-    
+        """Obtém lista de clientes da planilha"""
         try:
             # Esperado: Nome | WhatsApp | Valor
             dados = self.sheet.get_all_records()
@@ -135,7 +135,7 @@ class BotAluguelMotos:
             return []
     
     def enviar_mensagem(self, numero, mensagem):
-        
+        """Envia mensagem via Evolution API"""
         try:
             url = f"{self.api_url}/message/sendText/{self.instance_name}"
             
@@ -164,7 +164,7 @@ class BotAluguelMotos:
             return False
     
     def enviar_imagem(self, numero, imagem_path, legenda=''):
-       
+        """Envia imagem via Evolution API"""
         try:
             url = f"{self.api_url}/message/sendMedia/{self.instance_name}"
             
@@ -198,7 +198,7 @@ class BotAluguelMotos:
             return False
     
     def executar_cobranca(self):
-       
+        """Executa cobrança diária às 22:30"""
         print("\n" + "="*50)
         print(f"🕐 Iniciando cobrança - {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
         print("="*50)
@@ -236,7 +236,7 @@ Obrigado! 🏍️"""
         print("-"*50 + "\n")
     
     def processar_webhook(self, dados_webhook):
-       
+        """Processa webhooks recebidos da Evolution API"""
         try:
             # Extrair informações do webhook
             event_type = dados_webhook.get('event', '')
@@ -338,7 +338,7 @@ Por favor, dar baixa no sistema."""
             print(f"❌ Erro ao processar comprovante: {e}")
     
     def agendar_cobrancas(self):
-       
+        """Agenda cobrança diária às 22:30"""
         schedule.every().day.at("22:30").do(self.executar_cobranca)
         print("⏰ Cobrança agendada para 22:30 todos os dias")
     
@@ -358,7 +358,7 @@ Por favor, dar baixa no sistema."""
         self.agendar_cobrancas()
         
         # Loop principal
-        print(!)
+        print("🔄 Bot rodando... (Ctrl+C para parar)\n")
         
         try:
             while True:
@@ -370,7 +370,7 @@ Por favor, dar baixa no sistema."""
 
 # Função auxiliar para testar cobrança manualmente
 def testar_cobranca():
-    
+    """Testa envio de cobrança sem esperar às 22:30"""
     bot = BotAluguelMotos()
     print("\n🧪 MODO DE TESTE - Executando cobrança agora\n")
     bot.executar_cobranca()
